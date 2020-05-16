@@ -12,7 +12,7 @@ First, make sure you have Janet installed and available on your path. There are 
 
 To use this layer, clone it into the `private` directory in your `.emacs.d` directory.
 
-    git clone  https://github.com/cmiles74/spacemacs-janet-layer ~/.emacs.d/private/janet
+    git clone https://github.com/cmiles74/spacemacs-janet-layer.git ~/.emacs.d/private/janet
     
 After that, add `janet` to your list of layers in your `.spacemacs` file.
 

@@ -2,61 +2,37 @@
 ;;
 ;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
 ;;
-;; Author:  <cmiles@FRIDAY>
-;; URL: https://github.com/syl20bnr/spacemacs
+;; Author: Christopher Miles <twitch@nervestaple.com>
+;; URL: https://github.com/cmiles74/spacemacs-janet-mode
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; License: GPLv3
 
-;;; Commentary:
-
-;; See the Spacemacs documentation and FAQs for instructions on how to implement
-;; a new layer:
-;;
-;;   SPC h SPC layers RET
-;;
-;;
-;; Briefly, each package to be installed or configured by this layer should be
-;; added to `spacemacs-janet-layer-packages'. Then, for each package PACKAGE:
-;;
-;; - If PACKAGE is not referenced by any other Spacemacs layer, define a
-;;   function `spacemacs-janet-layer/init-PACKAGE' to load and initialize the package.
-
-;; - Otherwise, PACKAGE is already referenced by another Spacemacs layer, so
-;;   define the functions `spacemacs-janet-layer/pre-init-PACKAGE' and/or
-;;   `spacemacs-janet-layer/post-init-PACKAGE' to customize the package as it is loaded.
-
 ;;; Code:
 
-(defconst spacemacs-janet-layer-packages
-  '()
-  "The list of Lisp packages required by the spacemacs-janet-layer layer.
+(defconst janet-packages
+  '(
+    ;; major mode
+    (janet-mode :location (recipe :repo "ALSchwalm/janet-mode" :fetcher github))
 
-Each entry is either:
+    ;; interactive janet mode
+    (ijanet :location (recipe :repo "SerialDev/ijanet-mode" :fetcher github))))
 
-1. A symbol, which is interpreted as a package to be installed, or
+(defun janet/init-ijanet ()
+  "Initialize the interactive janet mode"
+  (use-package ijanet
+    :init (progn
+            (spacemacs/register-repl 'ijanet 'ijanet "janet")
+            (spacemacs/set-leader-keys-for-major-mode 'janet-mode
+              "'" 'ijanet))))
 
-2. A list of the form (PACKAGE KEYS...), where PACKAGE is the
-    name of the package to be installed or loaded, and KEYS are
-    any number of keyword-value-pairs.
-
-    The following keys are accepted:
-
-    - :excluded (t or nil): Prevent the package from being loaded
-      if value is non-nil
-
-    - :location: Specify a custom installation location.
-      The following values are legal:
-
-      - The symbol `elpa' (default) means PACKAGE will be
-        installed using the Emacs package manager.
-
-      - The symbol `local' directs Spacemacs to load the file at
-        `./local/PACKAGE/PACKAGE.el'
-
-      - A list beginning with the symbol `recipe' is a melpa
-        recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
-
-
-;;; packages.el ends here
+(defun janet/init-janet-mode ()
+  "Initialize the major mode"
+  (use-package janet-mode
+    :init (with-eval-after-load 'janet-mode
+            (define-key janet-mode-map (kbd "C-c M-j") 'ijanet)
+            (define-key janet-mode-map (kbd "C-c C-c") 'ijanet-eval-defun)
+            (define-key janet-mode-map (kbd "C-c C-l") 'ijanet-eval-line)
+            (define-key janet-mode-map (kbd "C-c C-r") 'ijanet-eval-region)
+            (define-key janet-mode-map (kbd "C-c C-b") 'ijanet-eval-buffer))))
